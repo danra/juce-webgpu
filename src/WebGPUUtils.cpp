@@ -107,8 +107,9 @@ wgpu::raii::Buffer WebGPUTexture::read (WebGPUContext& context)
     std::atomic<bool> mapped { false };
     readbackBuffer->mapAsync (
         WGPUMapMode_Read, 0, bufferSize, WGPUBufferMapCallbackInfo {
-                                             .callback = [] (WGPUMapAsyncStatus, WGPUStringView, void* userdata1, void*)
+                                             .callback = [] (WGPUMapAsyncStatus status, WGPUStringView, void* userdata1, void*)
                                              {
+                                                 assert (status == WGPUMapAsyncStatus_Success);
                                                  auto* flag = reinterpret_cast<std::atomic<bool>*> (userdata1);
                                                  flag->store (true, std::memory_order_release);
                                              },
