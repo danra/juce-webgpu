@@ -102,7 +102,10 @@ wgpu::raii::Buffer WebGPUTexture::read (WebGPUContext& context)
         context.queue->submit (1, &*wgpu::raii::CommandBuffer (encoder->finish()));
     }
 
-    readbackBuffer->mapAsync (WGPUMapMode_Read, 0, bufferSize, WGPUBufferMapCallbackInfo { .callback = [] (WGPUMapAsyncStatus, WGPUStringView, void*, void*) {} });
+    readbackBuffer->mapAsync (WGPUMapMode_Read, 0, bufferSize, WGPUBufferMapCallbackInfo { .callback = [] (WGPUMapAsyncStatus status, WGPUStringView, void*, void*)
+                                                                                           {
+                                                                                               assert (status == WGPUMapAsyncStatus_Success);
+                                                                                           } });
     context.device->poll (true, nullptr);
 
     return readbackBuffer;
